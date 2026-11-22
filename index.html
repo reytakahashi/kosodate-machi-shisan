@@ -224,6 +224,10 @@ ol.todo li::before{content:counter(todo);position:absolute;left:14px;top:13px;wi
   .it .n{grid-column:1} .it .a{grid-column:2;grid-row:1} .it .w{grid-column:1/-1}
   .it.sum .w,.it.total .w{display:none}
 }
+
+.machilist{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.machilist a{font-size:14px;text-decoration:none;color:var(--ink);border:1px solid var(--line-strong);border-radius:999px;padding:5px 14px;background:var(--panel)}
+.machilist a:hover{border-color:var(--accent);background:var(--accent-weak)}
 </style>
 </head>
 <body>
@@ -250,6 +254,7 @@ ol.todo li::before{content:counter(todo);position:absolute;left:14px;top:13px;wi
 <section class="panel" aria-label="ご家庭のこと"><div id="form"></div></section>
 <h2 class="stephead"><span class="step">3</span>結果を見る</h2>
 <main id="main"></main>
+<section class="panel" id="machi"><h2>区や市ごとのページ</h2><p class="lead">もらえるお金、保育料、申請の期限、待機児童を、区や市ごとにまとめています。</p><div class="machilist"><a href="/machi/chiyoda/">千代田区</a><a href="/machi/chuo/">中央区</a><a href="/machi/minato/">港区</a><a href="/machi/shinjuku/">新宿区</a><a href="/machi/bunkyo/">文京区</a><a href="/machi/taito/">台東区</a><a href="/machi/sumida/">墨田区</a><a href="/machi/koto/">江東区</a><a href="/machi/shinagawa/">品川区</a><a href="/machi/meguro/">目黒区</a><a href="/machi/ota/">大田区</a><a href="/machi/setagaya/">世田谷区</a><a href="/machi/shibuya/">渋谷区</a><a href="/machi/nakano/">中野区</a><a href="/machi/suginami/">杉並区</a><a href="/machi/toshima/">豊島区</a><a href="/machi/kita/">北区</a><a href="/machi/arakawa/">荒川区</a><a href="/machi/itabashi/">板橋区</a><a href="/machi/nerima/">練馬区</a><a href="/machi/adachi/">足立区</a><a href="/machi/katsushika/">葛飾区</a><a href="/machi/edogawa/">江戸川区</a><a href="/machi/yokohama/">横浜市</a><a href="/machi/kawasaki/">川崎市</a><a href="/machi/ichikawa/">市川市</a><a href="/machi/urayasu/">浦安市</a><a href="/machi/nagareyama/">流山市</a></div></section>
 <section class="panel notes" id="shikata"><h2>計算のしかた</h2><ul>
   <li>1人目のお子さんの場合で計算しています。</li>
   <li>計算する期間は、お子さんが3歳児クラスに上がる月までです。3歳児クラスからは、保育料が全国で無料になります。</li>
