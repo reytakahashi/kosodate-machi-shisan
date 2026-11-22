@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kosodate-machi-shisan.com/sitemap.xml

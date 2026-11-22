@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<link rel="canonical" href="https://kosodate-machi-shisan.com/">
+<meta property="og:title" content="子育てまち試算">
+<meta property="og:description" content="出産と子育てでもらえるお金と保育料を、住む区や市ごとに計算します。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kosodate-machi-shisan.com/">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>子育てまち試算｜出産と子育てのお金を区や市ごとに計算</title>
+<meta name="description" content="赤ちゃんが生まれるともらえるお金と保育料を、東京23区と近くの5市について、ご家庭に合わせて計算します。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@700&display=swap" rel="stylesheet">
+<style>
+/* 配置の考え方：白い帯の上にサイト名と案内。最初の画面は、左に何が分かるサイトかの一文、右にいまの条件での金額の差。その下に3つの手順、結果、計算のしかた、運営者の順。色は白を基調に、ばら色を押せる場所と金額だけに使い、濃いあずき色を見出しと帯に使う */
+:root{
+  --bg:#ffffff; --band:#fbf5f3; --panel:#ffffff; --ink:#2c2226; --sub:#75666b; --line:#eadfe0; --line-strong:#d9c9cc;
+  --accent:#d63f6c; --accent-deep:#b22a55; --accent-ink:#ffffff; --accent-weak:#fdeef2; --plum:#4a2436; --plum-ink:#fbeff2;
+  --good:#237a5b; --good-weak:#e8f5ef; --warn:#a06512; --warn-weak:#fbf1df; --bad:#c23b3b; --bad-weak:#fdecec;
+  --shadow:0 1px 2px rgba(74,36,54,.06),0 8px 24px -12px rgba(74,36,54,.18);
+  --font-body:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+  --font-display:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#191316; --band:#20181b; --panel:#261d21; --ink:#f3e9ec; --sub:#b9a7ad; --line:#3d2f34; --line-strong:#56434a;
+    --accent:#f086a6; --accent-deep:#f4a3bb; --accent-ink:#2a1019; --accent-weak:#3a1f2a; --plum:#120c0f; --plum-ink:#e9d9de;
+    --good:#73cfa9; --good-weak:#1d3229; --warn:#e6b560; --warn-weak:#372b17; --bad:#f29090; --bad-weak:#3a1f1f;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#191316; --band:#20181b; --panel:#261d21; --ink:#f3e9ec; --sub:#b9a7ad; --line:#3d2f34; --line-strong:#56434a;
+  --accent:#f086a6; --accent-deep:#f4a3bb; --accent-ink:#2a1019; --accent-weak:#3a1f2a; --plum:#120c0f; --plum-ink:#e9d9de;
+  --good:#73cfa9; --good-weak:#1d3229; --warn:#e6b560; --warn-weak:#372b17; --bad:#f29090; --bad-weak:#3a1f1f;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.8;-webkit-font-smoothing:antialiased}
+p{margin:0}
+a{color:var(--accent-deep);text-underline-offset:3px}
+button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* 上の帯 */
+.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top .in{max-width:1080px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:.02em}
+.brand svg{flex:none}
+.trial{font-family:var(--font-body);font-size:11px;font-weight:500;color:var(--warn);background:var(--warn-weak);border-radius:4px;padding:1px 6px}
+.top ul{list-style:none;margin:0 0 0 auto;padding:0;display:flex;gap:4px}
+.top li{font-size:13px}
+.top li button{font:inherit;background:none;border:0;color:var(--sub);padding:6px 10px;border-radius:8px;cursor:pointer}
+.top li button:hover{color:var(--ink);background:var(--band)}
+
+/* 最初の画面 */
+.hero{background:var(--band);border-bottom:1px solid var(--line)}
+.hero .in{max-width:1080px;margin:0 auto;padding:44px 20px 40px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:36px;align-items:center}
+h1{font-family:var(--font-display);font-weight:700;font-size:38px;line-height:1.38;margin:0 0 14px;letter-spacing:.01em;text-wrap:balance}
+.hero .lead{color:var(--ink);font-size:16px;max-width:30em}
+.facts{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px 22px}
+.facts li{font-size:13px;color:var(--sub);display:flex;align-items:center;gap:6px}
+.facts li::before{content:"";width:16px;height:16px;border-radius:50%;background:var(--good-weak) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.3l2.3 2.3 4.7-5' fill='none' stroke='%23237a5b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px}
+.gap{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:22px 22px 18px;box-shadow:var(--shadow)}
+.gap .cap{font-size:13px;color:var(--sub)}
+.gap .diff{font-family:var(--font-display);font-size:34px;font-weight:700;line-height:1.3;color:var(--accent-deep);font-variant-numeric:tabular-nums;margin:2px 0 14px}
+.gap .diff small{font-size:15px;color:var(--ink);font-weight:700;margin-left:4px}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:10px 12px;align-items:center;font-size:13px}
+.bars .nm{font-weight:700}
+.bars .v{font-variant-numeric:tabular-nums;font-weight:700;text-align:right;white-space:nowrap}
+.bars .track{position:relative;height:14px;background:var(--band);border-radius:4px}
+.bars .zero{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--line-strong)}
+.bars .bar{position:absolute;top:0;bottom:0;border-radius:4px}
+.bars .bar.pos{background:var(--accent)} .bars .bar.neg{background:var(--plum);opacity:.55}
+.gap .note{font-size:12px;color:var(--sub);margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+
+.wrap{max-width:1080px;margin:0 auto;padding:36px 20px 64px;display:flex;flex-direction:column;gap:18px}
+h2{font-family:var(--font-display);font-size:21px;line-height:1.45;margin:0 0 10px;text-wrap:balance;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+h2.stephead{margin:14px 0 -4px;font-size:22px}
+h2.stephead:first-child{margin-top:0}
+h3{font-size:14px;margin:10px 0 4px}
+.lead{color:var(--sub);font-size:14px;max-width:44em}
+.step{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--plum);color:var(--plum-ink);font-size:15px;font-family:var(--font-body);font-weight:700;flex:none}
+
+nav#nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+nav#nav button{font:inherit;text-align:left;border:1.5px solid var(--line-strong);background:var(--panel);color:var(--ink);border-radius:16px;padding:16px 18px 16px 50px;cursor:pointer;position:relative}
+nav#nav button:hover{border-color:var(--accent)}
+nav#nav button::before{content:"";position:absolute;left:18px;top:21px;width:18px;height:18px;border-radius:50%;border:2px solid var(--line-strong);background:var(--panel)}
+nav#nav button[aria-selected="true"]{border-color:var(--accent);background:var(--accent-weak);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}
+nav#nav button[aria-selected="true"]::before{border-color:var(--accent);background:radial-gradient(var(--accent) 45%,var(--panel) 50%)}
+nav#nav button strong{display:block;font-family:var(--font-display);font-size:17px}
+nav#nav button span{font-size:13px;color:var(--sub)}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px 24px}
+label.f{display:flex;flex-direction:column;gap:5px}
+.lab{color:var(--ink);font-size:13px;font-weight:700}
+.hint{font-size:12px;color:var(--sub)}
+.pair{display:flex;gap:6px}
+select,input{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;padding:10px 12px;min-width:0;width:100%}
+select:hover,input:hover{border-color:var(--accent)}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex:none}
+label.f.check{flex-direction:row;align-items:center;gap:8px;grid-column:1/-1}
+label.f.check span{font-size:13px;color:var(--ink)}
+
+.switch{display:flex;align-items:flex-start;gap:12px;margin:14px 0 4px;padding:14px 16px;border:1.5px solid var(--line-strong);border-radius:14px;cursor:pointer;max-width:44em;position:relative}
+.switch:hover{border-color:var(--accent)}
+.switch:has(input:checked){border-color:var(--accent);background:var(--accent-weak)}
+.switch input{position:absolute;opacity:0;width:44px;height:26px;margin:0;cursor:pointer}
+.switch .knob{flex:none;width:44px;height:26px;border-radius:999px;background:var(--line-strong);position:relative;margin-top:1px}
+.switch .knob::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.switch input:checked + .knob{background:var(--accent)}
+.switch input:checked + .knob::after{left:21px}
+.switch input:focus-visible + .knob{outline:2px solid var(--accent);outline-offset:2px}
+.switch strong{display:block;font-size:15px}
+.switch .sub{display:block}
+@media (prefers-reduced-motion:no-preference){.switch .knob,.switch .knob::after{transition:left .15s,background-color .15s}}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:6px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px 18px;display:flex;flex-direction:column;gap:2px}
+.tile:first-child{background:var(--accent-weak);border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.tile > .sub:first-child{font-weight:700;color:var(--accent-deep);font-size:12px}
+.pickname{display:block;font-family:var(--font-display);font-size:20px;margin-top:4px}
+.big{font-family:var(--font-display);font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3;color:var(--ink)}
+.sub{color:var(--sub);font-size:12px;line-height:1.7}
+.tablebox{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:14px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--sub);font-weight:500;white-space:nowrap;padding:9px 10px;background:var(--band);border-bottom:1px solid var(--line-strong)}
+th:first-child{border-radius:10px 0 0 10px} th:last-child{border-radius:0 10px 10px 0}
+tbody tr:last-child td{border-bottom:0}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.num > strong{font-size:16px}
+tr.base td{background:var(--accent-weak)}
+.rk{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:50%;background:var(--band);color:var(--sub);font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+.rk.top{background:var(--accent);color:var(--accent-ink)}
+.pill{display:inline-block;border-radius:6px;padding:1px 9px;font-size:12px;font-weight:500;white-space:nowrap}
+.pill.good{color:var(--good);background:var(--good-weak)} .pill.warn{color:var(--warn);background:var(--warn-weak)} .pill.bad{color:var(--bad);background:var(--bad-weak)} .pill.mute{color:var(--sub);background:var(--band)}
+button.more{font:inherit;font-size:13px;font-weight:500;color:var(--accent-deep);background:var(--panel);border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:999px;padding:5px 14px;cursor:pointer;white-space:nowrap}
+button.more:hover{background:var(--accent-weak)}
+button.more[aria-expanded="true"]{background:var(--plum);border-color:var(--plum);color:var(--plum-ink)}
+tr.detail > td{padding:0 0 18px;border-bottom:1px solid var(--line-strong)}
+.dbox{background:var(--band);border-radius:0 0 16px 16px;padding:18px 22px 20px}
+.dhead{font-family:var(--font-display);font-size:17px;margin-bottom:4px}
+.dgroup{font-size:12px;font-weight:700;color:var(--sub);margin:14px 0 2px}
+.it{display:grid;grid-template-columns:minmax(0,17em) minmax(0,1fr) 7.5em;gap:4px 18px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px;align-items:baseline}
+.it .n strong{display:block;line-height:1.5}
+.it .who{font-size:12px;color:var(--sub)}
+.it .w{font-size:13px;color:var(--sub)}
+.it .a{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:15px}
+.it.zero .n strong{font-weight:500;color:var(--sub)}
+.it.zero .a{font-weight:500;font-size:12px;color:var(--sub)}
+.it.sum{border-bottom:0}
+.it.sum .a,.it.sum .n strong{font-size:14px}
+.it.total{border-bottom:0;border-top:2px solid var(--plum);margin-top:6px;padding-top:14px}
+.it.total .n strong{font-size:15px}
+.it.total .a{font-family:var(--font-display);font-size:22px;color:var(--accent-deep)}
+.dbox h3{margin:16px 0 4px;font-size:13px}
+.dbox ul li{color:var(--sub)}
+details summary{cursor:pointer;color:var(--accent-deep);font-size:13px;font-weight:500}
+.items{display:grid;grid-template-columns:1fr auto;gap:8px 16px;font-size:13px;margin:10px 0;max-width:720px}
+.items .amt{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.items .zero{color:var(--sub)}
+.items .tot{font-weight:700;border-top:1px solid var(--line);padding-top:8px}
+ul{margin:4px 0 0;padding-left:1.2em}
+li{font-size:13px}
+.notes{background:var(--band);box-shadow:none}
+.notes li{color:var(--sub);margin:3px 0}
+.cta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{display:inline-block;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:9px 20px;text-decoration:none;font-size:13px;font-weight:700;border:1.5px solid var(--accent)}
+.btn:hover{background:var(--accent-deep);border-color:var(--accent-deep)}
+.btn.ghost{background:var(--panel);color:var(--accent-deep);border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+.btn.ghost:hover{background:var(--accent-weak)}
+ol.todo{list-style:none;counter-reset:todo;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+ol.todo li{counter-increment:todo;font-size:14px;background:var(--band);border-radius:12px;padding:12px 14px 12px 50px;position:relative}
+ol.todo li::before{content:counter(todo);position:absolute;left:14px;top:13px;width:24px;height:24px;border-radius:50%;background:var(--plum);color:var(--plum-ink);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+/* 下の帯 */
+.foot{background:var(--plum);color:var(--plum-ink)}
+.foot .in{max-width:1080px;margin:0 auto;padding:36px 20px 28px;display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:28px}
+.foot h3{font-family:var(--font-display);font-size:15px;margin:0 0 8px;color:var(--plum-ink)}
+.foot p,.foot li{font-size:13px;line-height:1.9;color:color-mix(in srgb,var(--plum-ink) 80%,transparent)}
+.foot ul{list-style:none;padding:0;margin:0}
+.foot a{color:var(--plum-ink)}
+.foot .copy{grid-column:1/-1;border-top:1px solid color-mix(in srgb,var(--plum-ink) 20%,transparent);padding-top:14px;font-size:12px}
+
+@media (max-width:860px){
+  .hero .in{grid-template-columns:1fr;gap:24px;padding:32px 20px 28px}
+  h1{font-size:30px}
+  .foot .in{grid-template-columns:1fr}
+  .top ul{display:none}
+}
+@media (max-width:520px){h1{font-size:26px}.big{font-size:26px}.panel{padding:16px;border-radius:16px}.wrap{padding:24px 14px 48px}.hero .in{padding:26px 16px 24px}.gap .diff{font-size:28px}h2.stephead{font-size:19px}}
+@media (prefers-reduced-motion:no-preference){nav#nav button,.btn,select,input{transition:background-color .15s,border-color .15s,box-shadow .15s}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+@media (max-width:680px){
+  .tablebox{overflow-x:visible}
+  table.rank,table.rank tbody{display:block}
+  table.rank thead{display:none}
+  table.rank tr{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:start;padding:14px 14px;margin:0 0 10px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+  table.rank tr.base{background:var(--accent-weak);border-color:var(--accent)}
+  table.rank td{display:block;padding:0;border:0;background:none!important;white-space:normal}
+  table.rank td:nth-child(2){font-size:16px;align-self:start;padding-top:2px}
+  table.rank td:nth-child(3){text-align:right}
+  table.rank td:nth-child(4),table.rank td:nth-child(5),table.rank td:nth-child(6),table.rank td:nth-child(7){grid-column:1/-1;text-align:left}
+  table.rank td:nth-child(4),table.rank td:nth-child(6){display:flex;gap:4px 10px;flex-wrap:wrap;align-items:baseline;padding-top:8px;border-top:1px dashed var(--line)}
+  table.rank td:nth-child(4)::before{content:attr(data-l);color:var(--sub);font-size:12px;min-width:7.5em}
+  table.rank td:nth-child(6)::before{content:"家賃の目安";color:var(--sub);font-size:12px;min-width:7.5em}
+  table.rank td:nth-child(6) br{display:none}
+  table.rank td:nth-child(6) a{margin-left:6px}
+  table.rank td:nth-child(7){padding-top:4px}
+  table.rank tr:has(+ tr.detail){margin-bottom:0;border-radius:14px 14px 0 0;border-bottom:0}
+  table.rank tr.detail{display:block;padding:0;margin:0 0 10px;border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px;overflow:hidden}
+  table.rank tr.detail > td{display:block;padding:0;border:0}
+  .dbox{border-radius:0;padding:14px 14px 18px}
+  .it{grid-template-columns:minmax(0,1fr) auto;gap:2px 12px}
+  .it .n{grid-column:1} .it .a{grid-column:2;grid-row:1} .it .w{grid-column:1/-1}
+  .it.sum .w,.it.total .w{display:none}
+}
+</style>
+</head>
+<body>
+<div class="top"><div class="in">
+  <a class="brand" href="#kuraberu" aria-label="子育てまち試算">
+    <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="var(--accent)"/><path d="M7 21V13.5L12 9l5 4.5V21zM17 21v-6l3-2.5 3 2.5V21z" fill="var(--accent-ink)"/><circle cx="12" cy="16.5" r="1.6" fill="var(--accent)"/></svg>
+    子育てまち試算
+  </a>
+  <ul><li><button data-go="s1">計算する</button></li><li><button data-go="shikata">計算のしかた</button></li><li><button data-go="unei">運営者</button></li></ul>
+</div></div>
+<header class="hero"><div class="in">
+  <div>
+    <h1>住む区や市で、出産と子育てのお金はこれだけ変わります</h1>
+    <p class="lead">赤ちゃんが生まれるともらえるお金と保育料を、ご家庭に合わせて計算します。申請の期限も区や市ごとに確かめられます。</p>
+    <ul class="facts"><li>東京23区と近くの5市</li><li>区や市の公式ページで確認した金額</li><li>登録は不要、選ぶだけ</li></ul>
+  </div>
+  <div class="gap" id="gap" aria-live="polite"></div>
+</div></header>
+<div class="wrap">
+<h2 class="stephead" id="s1"><span class="step">1</span>あてはまるほうを選んでください</h2>
+<nav id="nav" role="tablist" aria-label="見たい内容を選ぶ"></nav>
+<h2 class="stephead"><span class="step">2</span>ご家庭のことを教えてください</h2>
+<section class="panel" aria-label="ご家庭のこと"><div id="form"></div></section>
+<h2 class="stephead"><span class="step">3</span>結果を見る</h2>
+<main id="main"></main>
+<section class="panel notes" id="shikata"><h2>計算のしかた</h2><ul>
+  <li>1人目のお子さんの場合で計算しています。</li>
+  <li>計算する期間は、お子さんが3歳児クラスに上がる月までです。3歳児クラスからは、保育料が全国で無料になります。</li>
+  <li>保育料は認可保育園に入れた場合の金額です。待機児童が0人の区や市でも、希望した園に入れるとは限りません。</li>
+  <li>保育料は年収から計算した目安です。実際の金額は、区や市から届く通知で確認してください。</li>
+  <li>国民健康保険料と、妊婦健診の助成は計算に入れていません。</li>
+  <li>出産費用に健康保険が使えるようになる制度が、2028年6月までに始まる予定です。出産費用の助成は変わる可能性があります。</li>
+  <li>金額と条件は変わることがあります。申請の前に、区や市の窓口で確認してください。このページの内容は2026年11月22日に確認したものです。</li>
+</ul></section>
+</div>
+<footer class="foot" id="unei"><div class="in">
+  <div><h3>子育てまち試算</h3><p>出産と子育てでもらえるお金と保育料を、住む区や市ごとに計算するサービスです。金額は区や市の公式ページで確認し、毎月見直しています。</p></div>
+  <div><h3>運営者</h3><ul><li><a href="https://bulwer.jp/" target="_blank" rel="noopener">Bulwer</a></li><li>お問い合わせ：<a href="mailto:info@kosodate-machi-shisan.com">info@kosodate-machi-shisan.com</a></li><li><a href="/about/">運営者情報と個人情報の扱い</a></li></ul></div>
+  <div><h3>ご利用にあたって</h3><ul><li>計算結果は目安です。申請の前に区や市の窓口で確認してください。</li><li>賃貸サイトへのリンクは外部のサイトに移動します。</li></ul></div>
+  <p class="copy">最終確認日 2026年11月22日　© <a href="https://bulwer.jp/" target="_blank" rel="noopener">Bulwer</a></p>
+</div></footer>
+<script id="data" type="application/json">{"meta":{"site":"子育てまち試算","domain":"kosodate-machi-shisan.com","dataVersion":1,"lastChecked":"2026-11-22","scope":"東京23区、市川市、浦安市、流山市、川崎市、横浜市の28自治体","assumptions":{"child":"第1子に固定","daycareHours":"保育標準時間に固定","birthCost":650000,"lumpSumFromInsurer":500000,"excluded":["国の妊婦のための支援給付や児童手当など全国共通の制度","妊娠時の面接で渡される1万円相当の品","国民健康保険料","妊婦健康診査の助成"]},"waitingChildrenSources":{"東京都":"https://www.metro.tokyo.lg.jp/documents/d/tosei/20260828_05_04","千葉県":"https://www.pref.chiba.lg.jp/jika/hoikusho/jouhou/documents/r080401itiran.pdf","横浜市":"https://www.city.yokohama.lg.jp/city-info/koho-kocho/press/kodomo/2026/0423taiki080401.html","川崎市":"https://www.city.kawasaki.jp/templates/prs/450/0000186972.html","note":"国の定義による待機児童数。特定の園だけを希望した人や育児休業を延長した人は数えない。東京都と千葉県の数字は2026-11-22に原本のPDFを画像で確認し、23区と市川市、浦安市、流山市のすべてが一致","verified":true},"rentSource":{"survey":"令和5年住宅・土地統計調査（2023年10月1日時点）","private":{"table":"表112-2-2 住宅の所有の関係別 1か月当たり家賃（民営借家、家賃0円を含まない）","url":"https://www.e-stat.go.jp/dbview?sid=0004021479"},"rooms":{"table":"表113-2 居住室数別 1か月当たり家賃（公営、UR・公社、給与住宅を含む）"},"note":"privateは部屋の広さを問わない平均。rooms3PrivateEstは、rooms3 × private ÷ all で出した推計で、統計にそのまま載っている数字ではない。順位の計算には使わない。"}},"prefectures":{"東京都":{"daycare":{"free":true,"note":"都の制度で第一子から0〜2歳の保育料が無償（2025年9月開始）","url":"https://www.fukushi.metro.tokyo.lg.jp/kodomo/hoiku/hoikuriyoujyoukyou/qa2","checked":"2026-11-22"},"benefits":[{"name":"018サポート","type":"monthly","url":"https://018support.metro.tokyo.lg.jp/faq/","note":"0〜18歳、所得制限なし","confidence":"公式","checked":"2026-11-22","amount":5000,"fromAgeMonths":0,"toAgeMonths":216,"deadline":"年3回の支給ごとに締め切りがある（7月1日、11月1日、3月1日）。出生後、早めに申請する","deadlineDays":60},{"name":"赤ちゃんファーストギフト","type":"once","url":"https://www.fukushi.metro.tokyo.lg.jp/kodomo/shussan/tokyo_shussankosodateouen","note":"育児用品などのギフト10万円分。出生日時点の住所が都内であることが条件。令和9年度以降の額は未発表","confidence":"公式","checked":"2026-11-22","timing":"birth","amount":100000,"deadline":"018サポートと同時に申請する。令和8年度生まれは令和9年9月15日まで。令和9年度生まれの期限は未発表","deadlineDays":180},{"name":"バースデーサポート","type":"once","url":"https://www.fukushi.metro.tokyo.lg.jp/kodomo/shussan/tokyo_shussankosodateouen","note":"都の補助で区市町村が実施。第1子は6万円相当。1歳または2歳の誕生日時点の住民登録が条件で、時期は自治体により異なる","confidence":"公式","checked":"2026-11-22","timing":"age","atAgeMonths":12,"amount":60000,"deadline":"区や市から案内が届いたあと、アンケートに答えて受け取る","deadlineDays":null},{"name":"無痛分娩費用の助成","type":"once","url":"https://www.fukushi.metro.tokyo.lg.jp/kodomo/shussan/mutsubunben/subsidy","note":"無痛分娩を選ぶ場合のみ最大10万円。都内で妊娠届を出し、申請まで都内に住み続けることと、対象医療機関での出産が条件","confidence":"公式","checked":"2026-11-22","timing":"pregnancy","amount":100000,"offByDefault":true,"requiresPrefContinuity":true,"deadline":"出産日の翌日から1年以内。電子申請のみ","deadlineDays":365}]},"神奈川県":{"benefits":[]},"千葉県":{"benefits":[]}},"municipalities":[{"id":"chiyoda","name":"千代田区","pref":"東京都","benefits":[{"name":"出産費用助成（区独自制度）","type":"costcover","url":"https://www.city.chiyoda.lg.jp/koho/kosodate/teate/shussanhiyojosei.html","note":"出産費用が出産育児一時金を上回った分、1度の出産につき最大31万円。出産日以前から区内に住所があり、申請日に引き続き1年以上の居住が必要。1年未満の場合は1年経過後に申請できる。申請期限は出産日から2年間","confidence":"公式","checked":"2026-11-22","cap":310000,"requiresResidenceAtBirth":true,"minResidenceMonthsAtApplication":12,"applyWithinMonths":24,"deadline":"出産日から2年以内。住み始めて1年を過ぎてから申請する","deadlineDays":730}],"remarks":["誕生準備手当は2025年9月30日で受付終了"],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":152023,"rooms3":210170,"rooms4":238395,"all":151637,"private":158291,"rooms3PrivateEst":219400.0}},{"id":"chuo","name":"中央区","pref":"東京都","benefits":[{"name":"新生児誕生祝品（区内共通買物・食事券）","type":"once","url":"https://www.city.chuo.lg.jp/a0020/kosodate/shussan/shussanshien/kaimonokenn.html","note":"3万円分に物価高対応の追加2万円分を加えた5万円分。出生日に保護者と新生児の住所が区内にあることが条件。追加分の継続は未確認","confidence":"公式","checked":"2026-11-22","timing":"birth","amount":50000,"requiresResidenceAtBirth":true,"deadline":"子が1歳になる前日まで","deadlineDays":365}],"remarks":["妊娠時にタクシー利用券1万2,000円分あり（都の助成を受けた事業。計算には含めていません）"],"waitingChildren":{"count":4,"changeFromLastYear":4,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":158421,"rooms3":180375,"rooms4":214118,"all":145610,"private":151875,"rooms3PrivateEst":188100.0}},{"id":"minato","name":"港区","pref":"東京都","benefits":[{"name":"出産費用助成","type":"costcover","url":"https://www.city.minato.tokyo.jp/kodomokyufu/kenko/ninshin/shussan/jose.html","note":"出産費用（81万円まで）から出産育児一時金を引いた額。出産日以前から区内に住所があり、申請日に引き続き1年以上居住していることが条件","confidence":"公式","checked":"2026-11-22","cap":310000,"requiresResidenceAtBirth":true,"minResidenceMonthsAtApplication":12,"deadline":"出生日から1年以内","deadlineDays":365}],"remarks":[],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":196440,"rooms3":260218,"rooms4":293607,"all":196160,"private":214161,"rooms3PrivateEst":284100.0}},{"id":"shinjuku","name":"新宿区","pref":"東京都","benefits":[],"remarks":["誕生祝い品（木のおもちゃなどの木工製品と絵本のガイドブック）あり","民間賃貸住宅家賃助成は世帯の総所得520万円以下が条件で抽選"],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.shinjuku.lg.jp/kodomo/file02_01_00003.html","checked":"2026-11-22"},"rent":{"rooms2":120908,"rooms3":125200,"rooms4":235103,"all":112012,"private":118799,"rooms3PrivateEst":132800.0}},{"id":"bunkyo","name":"文京区","pref":"東京都","benefits":[],"remarks":["区は令和6年の時点で、出産費用の独自の補助は実施の予定がないと説明している"],"waitingChildren":{"count":6,"changeFromLastYear":2,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.bunkyo.lg.jp/b003/p007859.html","checked":"2026-11-22"},"rent":{"rooms2":121873,"rooms3":148333,"rooms4":196809,"all":112934,"private":113849,"rooms3PrivateEst":149500.0}},{"id":"taito","name":"台東区","pref":"東京都","benefits":[{"name":"出産費用助成","type":"once","url":"https://www.city.taito.lg.jp/kosodatekyouiku/kosodate/mokutei/teate_josei/syussanhiyoujyosei.html","note":"産婦1人につき一律5万円。出産日当日に区内に住民票があることが条件。出産後の転入は対象外。申請は出産日から1年間","confidence":"公式","checked":"2026-11-22","timing":"birth","amount":50000,"requiresResidenceAtBirth":true,"applyWithinMonths":12,"deadline":"出産日から1年以内","deadlineDays":365}],"remarks":["妊娠時の面接で1万円相当の品あり（都の補助による事業。区による差がほぼ出ないため計算には含めていません）"],"waitingChildren":{"count":5,"changeFromLastYear":5,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":118849,"rooms3":142399,"rooms4":151008,"all":109874,"private":113045,"rooms3PrivateEst":146500.0}},{"id":"sumida","name":"墨田区","pref":"東京都","benefits":[],"remarks":[],"waitingChildren":{"count":17,"changeFromLastYear":12,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.sumida.lg.jp/kenko_fukushi/kenko/oyako_kenko/teatejyosei/index.html","checked":"2026-11-22"},"rent":{"rooms2":104632,"rooms3":112241,"rooms4":98365,"all":91777,"private":97919,"rooms3PrivateEst":119800.0}},{"id":"koto","name":"江東区","pref":"東京都","benefits":[],"remarks":[],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.koto.lg.jp/shussan.html","checked":"2026-11-22"},"rent":{"rooms2":88655,"rooms3":89540,"rooms4":113992,"all":87224,"private":103528,"rooms3PrivateEst":106300.0}},{"id":"shinagawa","name":"品川区","pref":"東京都","benefits":[{"name":"子育てファミリー世帯への転居費用助成","type":"once","url":"https://www.city.shinagawa.tokyo.jp/kurashi/sumai/1004280/1008920.html","note":"区内に住む子育て世帯が区内の賃貸住宅へ転居する場合に上限15万円（令和8年7月開始）。引越費、仲介手数料、礼金が対象。世帯の全員（2歳未満の子を除く）が区内に2年以上続けて住んでいること、転居後5年以上区内に住む予定であること、町会や自治会への加入、令和8年4月1日以降の契約であることが要件。妊娠中で親子健康手帳を受け取っている世帯も対象","confidence":"公式","checked":"2026-11-22","timing":"move","amount":150000,"onlyForCurrentResidents":true,"deadline":"区内で転居した日から6か月以内。予算額に達した時点で受付が終わる","deadlineDays":180},{"name":"産後家事育児支援訪問費助成（産後ドゥーラ）","type":"once","url":"https://www.city.shinagawa.tokyo.jp/kodomo/ninshinshussan/1001988/1001921.html","note":"1時間2,700円を第1子は60時間まで助成。現金の給付ではなく利用料の助成","confidence":"公式","checked":"2026-11-22","timing":"infant","amount":162000,"offByDefault":true,"deadline":"子が1歳1か月になるまで。期限までなら何度でも申請できる","deadlineDays":395}],"remarks":["出産時の区独自の現金給付はない（区の広報2026年5月15日号）","認可外保育の保育料助成は0〜2歳の課税世帯で月8万円が上限"],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":116373,"rooms3":132240,"rooms4":143054,"all":102811,"private":106501,"rooms3PrivateEst":137000.0}},{"id":"meguro","name":"目黒区","pref":"東京都","benefits":[{"name":"新生児誕生祝金","type":"once","url":"https://www.city.meguro.tokyo.jp/kurashi/shussan/ninpu_josei/shinseizitanzyoiwaikin.html","note":"新生児1人につき2万円。出生日に世帯の住民登録が区内にあることが条件。出生後に転入した世帯は対象外","confidence":"公式","checked":"2026-11-22","timing":"birth","amount":20000,"requiresResidenceAtBirth":true,"deadline":"出生日から3か月以内。出生通知票の電子申請と一緒に申し込む","deadlineDays":90}],"remarks":["ファミリー世帯家賃助成は所得の条件があり抽選"],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":129316,"rooms3":167148,"rooms4":231547,"all":129690,"private":131301,"rooms3PrivateEst":169200.0}},{"id":"ota","name":"大田区","pref":"東京都","benefits":[],"remarks":["妊娠時の面接で1万円相当の品あり（都の補助による事業。区による差がほぼ出ないため計算には含めていません）"],"waitingChildren":{"count":48,"changeFromLastYear":48,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.ota.tokyo.jp/seikatsu/kodomo/shien/kodomosien.html","checked":"2026-11-22"},"rent":{"rooms2":90895,"rooms3":109866,"rooms4":112491,"all":84489,"private":90043,"rooms3PrivateEst":117100.0}},{"id":"setagaya","name":"世田谷区","pref":"東京都","benefits":[{"name":"出産費助成制度","type":"once","url":"https://www.city.setagaya.lg.jp/02413/1206.html","note":"出産児1人につき5万円。出産日時点で区内に住所があることが条件。申請は出産の日から1年以内","confidence":"公式","checked":"2026-11-22","timing":"birth","amount":50000,"requiresResidenceAtBirth":true,"applyWithinMonths":12,"deadline":"出産の日から1年以内","deadlineDays":365}],"remarks":[],"waitingChildren":{"count":166,"changeFromLastYear":119,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":98100,"rooms3":127626,"rooms4":142444,"all":100331,"private":101948,"rooms3PrivateEst":129700.0}},{"id":"shibuya","name":"渋谷区","pref":"東京都","benefits":[{"name":"ハッピーマザー出産助成金","type":"once","url":"https://www.city.shibuya.tokyo.jp/kodomo/ninshin/ninshin-teate/happy_josei.html","note":"1人の出産につき限度額10万円。健康保険の付加給付がある場合はその額を引く。出産日の3か月前から申請日まで継続して区内に住民登録があることが条件","confidence":"公式","checked":"2026-11-22","timing":"birth","amount":100000,"minResidenceMonthsBeforeBirth":3,"reducedByInsurerTopUp":true,"deadline":"出産した日から1年以内","deadlineDays":365}],"remarks":[],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":139961,"rooms3":184687,"rooms4":210051,"all":130960,"private":134786,"rooms3PrivateEst":190100.0}},{"id":"nakano","name":"中野区","pref":"東京都","benefits":[],"remarks":["妊娠時に子ども商品券あり（都の補助による事業。計算には含めていません）"],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.tokyo-nakano.lg.jp/kosodate/kosodatesite_ohirune/nenreibetsu/ninshin/index.html","checked":"2026-11-22"},"rent":{"rooms2":95240,"rooms3":118551,"rooms4":112988,"all":86553,"private":88568,"rooms3PrivateEst":121300.0}},{"id":"suginami","name":"杉並区","pref":"東京都","benefits":[{"name":"子育て応援券（出生0歳児券）","type":"once","url":"https://www.city.suginami.tokyo.jp/s055/1131.html","note":"子育て支援サービスに使える応援券3万円分（令和8年度）。現金ではない","confidence":"公式","checked":"2026-11-22","timing":"birth","amount":30000,"voucher":true,"deadline":"申請は不要。出生届のあと、アプリに届く","deadlineDays":null},{"name":"子育て応援券（1歳児の無償券）","type":"once","url":"https://www.city.suginami.tokyo.jp/s055/1131.html","note":"1万5,000円分（令和8年度）。毎年4月中旬に年度の年齢で交付されるため、月齢での計算は近似","confidence":"公式","checked":"2026-11-22","timing":"age","atAgeMonths":12,"amount":15000,"voucher":true,"deadline":"申請は不要。4月中旬にアプリに届く","deadlineDays":null},{"name":"子育て応援券（2歳児の無償券）","type":"once","url":"https://www.city.suginami.tokyo.jp/s055/1131.html","note":"1万5,000円分（令和8年度）。毎年4月中旬に年度の年齢で交付されるため、月齢での計算は近似","confidence":"公式","checked":"2026-11-22","timing":"age","atAgeMonths":24,"amount":15000,"voucher":true,"deadline":"申請は不要。4月中旬にアプリに届く","deadlineDays":null}],"remarks":["妊娠時にゆりかご券1万円分あり（計算には含めていません）"],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":93411,"rooms3":123227,"rooms4":142915,"all":88047,"private":90003,"rooms3PrivateEst":126000.0}},{"id":"toshima","name":"豊島区","pref":"東京都","benefits":[{"name":"としま出産サポートクーポン","type":"once","url":"https://www.city.toshima.lg.jp/258/2406201637.html","note":"育児支援品に引き換える電子クーポン5万円相当。子育てエールへの登録が必要。子が1歳になるまでに1回","confidence":"公式","checked":"2026-11-22","timing":"infant","amount":50000,"voucher":true,"deadline":"子が1歳になるまで。子育てエールへの登録が必要","deadlineDays":365},{"name":"子育てエールの見守り訪問クーポン","type":"monthly","url":"https://www.city.toshima.lg.jp/258/2401151435.html","note":"月齢4か月から11か月の間、毎月の訪問のたびに3,000円相当のクーポン（最大8回）","confidence":"公式","checked":"2026-11-22","amount":3000,"fromAgeMonths":4,"toAgeMonths":12,"voucher":true,"deadline":"申請は不要。毎月の訪問のあとに届く","deadlineDays":null}],"remarks":["妊娠時にゆりかご応援ギフト1万円相当あり（計算には含めていません）","クーポンの引き換え先はベビーザらスのオンラインストア。区は当面の間利用できると案内している","家賃助成は転入後に出産した世帯は対象外"],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":98222,"rooms3":126331,"rooms4":165286,"all":91320,"private":92962,"rooms3PrivateEst":128600.0}},{"id":"kita","name":"北区","pref":"東京都","benefits":[],"remarks":["満1歳の誕生会への招待とプレゼントあり"],"waitingChildren":{"count":103,"changeFromLastYear":85,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.kita.lg.jp/children-edu/childcare/1002833/1002835/1002844.html","checked":"2026-11-22"},"rent":{"rooms2":77822,"rooms3":94628,"rooms4":91284,"all":78963,"private":87826,"rooms3PrivateEst":105200.0}},{"id":"arakawa","name":"荒川区","pref":"東京都","benefits":[],"remarks":[],"waitingChildren":{"count":14,"changeFromLastYear":3,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.arakawa.tokyo.jp/ninshinshussan/joseikyuufu/index.html","checked":"2026-11-22"},"rent":{"rooms2":81986,"rooms3":110232,"rooms4":115027,"all":86757,"private":90593,"rooms3PrivateEst":115100.0}},{"id":"itabashi","name":"板橋区","pref":"東京都","benefits":[],"remarks":["妊娠時の面接で1万円相当の品あり（都の補助による事業。区による差がほぼ出ないため計算には含めていません）"],"waitingChildren":{"count":35,"changeFromLastYear":28,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.itabashi.tokyo.jp/kosodate/teate/ninshin/index.html","checked":"2026-11-22"},"rent":{"rooms2":75384,"rooms3":87582,"rooms4":92708,"all":74657,"private":78286,"rooms3PrivateEst":91800.0}},{"id":"nerima","name":"練馬区","pref":"東京都","benefits":[],"remarks":["第3子以降の出生には1人につき10万円の祝金あり（出生日の1年以上前からの住民登録が条件）"],"waitingChildren":{"count":21,"changeFromLastYear":21,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.nerima.tokyo.jp/kosodatekyoiku/shussan/iwaikin.html","checked":"2026-11-22"},"rent":{"rooms2":85772,"rooms3":95690,"rooms4":108536,"all":84766,"private":87153,"rooms3PrivateEst":98400.0}},{"id":"adachi","name":"足立区","pref":"東京都","benefits":[{"name":"出産費助成事業","type":"costcover","url":"https://www.city.adachi.tokyo.jp/oyako/k-kyoiku/kosodate/syussanhi-josei.html","note":"出産費用と出産育児一時金などの差額、子1人につき上限10万円。母が出生日以前から区内に住所があり、申請日に引き続き1年以上居住していることが条件。1年未満の場合は1年経過後に申請できる場合がある","confidence":"公式","checked":"2026-11-22","cap":100000,"requiresResidenceAtBirth":true,"minResidenceMonthsAtApplication":12,"deadline":"出産の日から1年以内","deadlineDays":365}],"remarks":[],"waitingChildren":{"count":106,"changeFromLastYear":99,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":69117,"rooms3":71009,"rooms4":70425,"all":67017,"private":75499,"rooms3PrivateEst":80000.0}},{"id":"katsushika","name":"葛飾区","pref":"東京都","benefits":[{"name":"かつしか出産応援給付金","type":"once","url":"https://www.city.katsushika.lg.jp/kenkou/1000050/1001803/1031538.html","note":"区内在住の1歳未満の児童の養育者に、児童1人につき5万円","confidence":"公式","checked":"2026-11-22","timing":"infant","amount":50000,"deadline":"出生または転入で対象になった日から1年以内。児童手当の申請と一緒に申し込む","deadlineDays":365},{"name":"マタニティパス","type":"once","url":"https://www.city.katsushika.lg.jp/kenkou/1000050/1001803/1015907.html","note":"交通系ICカードにチャージできる電子マネー6,000円分","confidence":"公式","checked":"2026-11-22","timing":"pregnancy","amount":6000,"deadline":"母子健康手帳を受け取ってから1年以内","deadlineDays":365}],"remarks":["妊娠時にこども商品券1万円分あり（計算には含めていません）"],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":67312,"rooms3":81608,"rooms4":70048,"all":69004,"private":73854,"rooms3PrivateEst":87300.0}},{"id":"edogawa","name":"江戸川区","pref":"東京都","benefits":[{"name":"乳児養育手当","type":"monthly","url":"https://www.city.edogawa.tokyo.jp/e049/kosodate/kosodate/teateshien/youiku.html","note":"0歳児が対象。転入した場合は転入の届出日から対象","confidence":"公式","checked":"2026-11-22","amount":13000,"fromAgeMonths":0,"toAgeMonths":12,"deadline":"子が1歳になる誕生日の前日まで。出生届のあと早めに申請する","deadlineDays":30}],"remarks":[],"waitingChildren":{"count":75,"changeFromLastYear":75,"asOf":"2026-04-01"},"daycare":{"inherit":"pref"},"rent":{"rooms2":70988,"rooms3":86322,"rooms4":100756,"all":76659,"private":80772,"rooms3PrivateEst":91000.0}},{"id":"yokohama","name":"横浜市","pref":"神奈川県","benefits":[{"name":"出産費用助成金","type":"costcover","url":"https://www.city.yokohama.lg.jp/kosodate-kyoiku/oyakokenko/teate/syussanjosei.html","note":"子1人につき最大9万円。出産日から申請時点まで市内に住民登録があることが条件。健康保険組合の付加給付がある場合はその額を引く","confidence":"公式","checked":"2026-11-22","cap":90000,"requiresResidenceAtBirth":true,"reducedByInsurerTopUp":true,"deadline":"出産した日の翌日から1年間","deadlineDays":365}],"remarks":["育児休業の延長希望を除く保留児童は1,256人（令和8年4月）"],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"free":false,"basis":"世帯の市民税所得割額（円）","condition":"0〜2歳、保育標準時間、第1子、認可保育所","period":"令和8年度","nonTaxableFee":0,"url":"https://www.city.yokohama.lg.jp/kosodate-kyoiku/hoiku-yoji/shisetsu/riyou/riyouryo/riyouryosantei/default20190319.files/0070_20260123.pdf","checked":"2026-11-22","verified":true,"verifyNote":"2026-11-22に料金表のPDFを画像で確認。認可保育所と認定こども園（保育利用）の列。以前の調査で使っていた月5万8,100円は小規模保育などの列の額だった","tiers":[{"tier":"C","from":0,"to":0,"monthlyFee":6700},{"tier":"D1","from":1,"to":10000,"monthlyFee":8200},{"tier":"D2","from":10001,"to":48600,"monthlyFee":10000},{"tier":"D3","from":48601,"to":50400,"monthlyFee":12500},{"tier":"D4","from":50401,"to":57700,"monthlyFee":14500},{"tier":"D5","from":57701,"to":77100,"monthlyFee":16500},{"tier":"D6","from":77101,"to":97000,"monthlyFee":20400},{"tier":"D7","from":97001,"to":102600,"monthlyFee":25000},{"tier":"D8","from":102601,"to":120600,"monthlyFee":29000},{"tier":"D9","from":120601,"to":138600,"monthlyFee":34000},{"tier":"D10","from":138601,"to":169000,"monthlyFee":38000},{"tier":"D11","from":169001,"to":174900,"monthlyFee":41500},{"tier":"D12","from":174901,"to":192900,"monthlyFee":44500},{"tier":"D13","from":192901,"to":211200,"monthlyFee":47500},{"tier":"D14","from":211201,"to":228900,"monthlyFee":50200},{"tier":"D15","from":228901,"to":246700,"monthlyFee":53000},{"tier":"D16","from":246701,"to":255700,"monthlyFee":55000},{"tier":"D17","from":255701,"to":264700,"monthlyFee":57000},{"tier":"D18","from":264701,"to":273700,"monthlyFee":58000},{"tier":"D19","from":273701,"to":282700,"monthlyFee":59000},{"tier":"D20","from":282701,"to":291700,"monthlyFee":60000},{"tier":"D21","from":291701,"to":301000,"monthlyFee":61000},{"tier":"D22","from":301001,"to":309700,"monthlyFee":64500},{"tier":"D23","from":309701,"to":335800,"monthlyFee":68000},{"tier":"D24","from":335801,"to":361300,"monthlyFee":71500},{"tier":"D25","from":361301,"to":387700,"monthlyFee":73600},{"tier":"D26","from":387701,"to":397000,"monthlyFee":75600},{"tier":"D27","from":397001,"to":null,"monthlyFee":77500}],"otherFacilityFees":{"label":"小規模保育事業、家庭的保育事業、居宅訪問型保育事業、新制度対象の事業所内保育事業","monthlyFeesByTier":{"C":4000,"D1":5100,"D2":6300,"D3":8600,"D4":10800,"D5":13100,"D6":19000,"D7":21900,"D8":26900,"D9":31100,"D10":35000,"D11":38100,"D12":41000,"D13":43800,"D14":46200,"D15":48800,"D16":50600,"D17":52200,"D18":53600,"D19":55000,"D20":55300,"D21":55600,"D22":55900,"D23":56300,"D24":56700,"D25":57200,"D26":57700,"D27":58100}}},"rent":{"rooms2":75980,"rooms3":83421,"rooms4":92364,"all":75381,"private":80554,"rooms3PrivateEst":89100.0}},{"id":"kawasaki","name":"川崎市","pref":"神奈川県","benefits":[],"remarks":["入所保留の児童は1,081人（令和8年4月）","妊婦健康診査の助成は合計13万5,000円（令和7年7月に拡充）"],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"free":false,"basis":"世帯の市民税所得割額（円）","condition":"0〜2歳、保育標準時間、第1子、認可保育所","period":"令和7年9月〜令和8年8月","nonTaxableFee":0,"url":"https://www.city.kawasaki.jp/450/cmsfiles/contents/0000030/30711/hoikuryoukingakuhyou.pdf","checked":"2026-11-22","verified":true,"verifyNote":"2026-11-22に料金表のPDFを画像で確認し、全25階層が一致。公立保育所、認可保育所、認定こども園（3号）、小規模保育A型の列。料金表のPDFの注記は令和8年8月分まで。令和8年度の利用案内（49ページ）に、0〜2歳の金額表は平成28年度以降変更していないことと、令和8年9月〜令和9年8月分は令和8年度の市民税額で決まることが書かれており、金額は同じ（2026-11-22確認）。令和9年度の利用案内のPDFは開けず未確認","tiers":[{"tier":"C1","from":0,"to":0,"monthlyFee":5300},{"tier":"C2","from":1,"to":4999,"monthlyFee":6300},{"tier":"C3","from":5000,"to":48599,"monthlyFee":7100},{"tier":"C4","from":48600,"to":50399,"monthlyFee":9200},{"tier":"C5","from":50400,"to":59999,"monthlyFee":11700},{"tier":"C6","from":60000,"to":70799,"monthlyFee":14700},{"tier":"C7","from":70800,"to":84599,"monthlyFee":18200},{"tier":"C8","from":84600,"to":96999,"monthlyFee":22000},{"tier":"C9","from":97000,"to":108599,"monthlyFee":25700},{"tier":"C10","from":108600,"to":122999,"monthlyFee":29500},{"tier":"C11","from":123000,"to":138599,"monthlyFee":33300},{"tier":"C12","from":138600,"to":154199,"monthlyFee":37200},{"tier":"C13","from":154200,"to":168999,"monthlyFee":41200},{"tier":"C14","from":169000,"to":183899,"monthlyFee":45200},{"tier":"C15","from":183900,"to":204599,"monthlyFee":50000},{"tier":"C16","from":204600,"to":234599,"monthlyFee":54500},{"tier":"C17","from":234600,"to":258599,"monthlyFee":57000},{"tier":"C18","from":258600,"to":276599,"monthlyFee":59000},{"tier":"C19","from":276600,"to":300999,"monthlyFee":60500},{"tier":"C20","from":301000,"to":321699,"monthlyFee":65500},{"tier":"C21","from":321700,"to":341199,"monthlyFee":70000},{"tier":"C22","from":341200,"to":366699,"monthlyFee":73000},{"tier":"C23","from":366700,"to":396999,"monthlyFee":74000},{"tier":"C24","from":397000,"to":475299,"monthlyFee":81500},{"tier":"C25","from":475300,"to":null,"monthlyFee":82800}]},"noOwnCashBenefit":{"confidence":"公式サイトの検索で確認、該当なし","url":"https://www.city.kawasaki.jp/tama/page/0000028441.html","checked":"2026-11-22"},"rent":{"rooms2":82040,"rooms3":93496,"rooms4":97543,"all":79273,"private":83222,"rooms3PrivateEst":98200.0}},{"id":"ichikawa","name":"市川市","pref":"千葉県","benefits":[{"name":"市川こども手当","type":"monthly","url":"https://www.city.ichikawa.lg.jp/page/73076.html","note":"保育園や幼稚園などに通っていない、生後57日から就学前の子に月1万5,000円（令和8年9月開始）","confidence":"公式","checked":"2026-11-22","amount":15000,"fromAgeMonths":2,"toAgeMonths":72,"untilDaycare":true,"deadline":"対象になった翌月から2年間。期限内ならさかのぼって受け取れる","deadlineDays":730}],"remarks":[],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"free":true,"note":"令和8年9月分から、認可保育施設の保育料は所得制限なしで無償","url":"https://www.city.ichikawa.lg.jp/uploaded/attachment/55961.pdf","checked":"2026-11-22"},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.ichikawa.lg.jp/catpage/kurashi-ninshinsyussan.html","checked":"2026-11-22"},"rent":{"rooms2":75890,"rooms3":84467,"rooms4":85882,"all":72904,"private":75831,"rooms3PrivateEst":87900.0}},{"id":"urayasu","name":"浦安市","pref":"千葉県","benefits":[],"remarks":["子の1歳の誕生日前後に子育てケアプランを作成すると、記念撮影と歯ブラシのプレゼントあり"],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"free":true,"note":"令和8年4月から、0〜2歳児クラスの保育料は無償（認可保育所、認定こども園、小規模保育、保育ママ）","url":"https://www.city.urayasu.lg.jp/_res/projects/default_project/_page_/001/008/549/koho1287_1-2.pdf","checked":"2026-11-22"},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.urayasu.lg.jp/kodomo/ninshin/soudan/index.html","checked":"2026-11-22"},"rent":{"rooms2":77987,"rooms3":93960,"rooms4":126158,"all":78055,"private":77881,"rooms3PrivateEst":93800.0}},{"id":"nagareyama","name":"流山市","pref":"千葉県","benefits":[],"remarks":["マタニティタクシー利用助成制度あり（金額は未確認）"],"waitingChildren":{"count":0,"changeFromLastYear":0,"asOf":"2026-04-01"},"daycare":{"free":false,"basis":"世帯の市民税所得割額（円）","condition":"0〜2歳、保育標準時間、第1子、認可保育所","period":"令和8年度","nonTaxableFee":0,"url":"https://www.city.nagareyama.chiba.jp/_res/projects/default_project/_page_/001/051/203/r8nyusyoannai.pdf","checked":"2026-11-22","verified":true,"verifyNote":"2026-11-22に入所案内のPDF（12ページ）の本文で確認し、全11階層が一致","tiers":[{"tier":"C1","from":0,"to":16199,"monthlyFee":8500},{"tier":"C2","from":16200,"to":32399,"monthlyFee":10100},{"tier":"C3","from":32400,"to":48599,"monthlyFee":11900},{"tier":"C4","from":48600,"to":60599,"monthlyFee":14800},{"tier":"C5","from":60600,"to":96999,"monthlyFee":24900},{"tier":"C6","from":97000,"to":132999,"monthlyFee":33900},{"tier":"C7","from":133000,"to":168999,"monthlyFee":42700},{"tier":"C8","from":169000,"to":195399,"monthlyFee":48100},{"tier":"C9","from":195400,"to":300999,"monthlyFee":59900},{"tier":"C10","from":301000,"to":396999,"monthlyFee":65400},{"tier":"C11","from":397000,"to":null,"monthlyFee":70000}]},"noOwnCashBenefit":{"confidence":"公式サイトの一覧で確認、該当なし","url":"https://www.city.nagareyama.chiba.jp/life/1001107/1001240/index.html","checked":"2026-11-22"},"rent":{"rooms2":75784,"rooms3":84319,"rooms4":76178,"all":73853,"private":75063,"rooms3PrivateEst":85700.0}}],"national":[{"name":"妊婦のための支援給付（1回目）","type":"once","url":"","note":"妊娠の届出時の面談のあとに申請する。妊婦1人につき5万円","confidence":"各自治体の公式ページで確認","checked":"2026-11-22","timing":"pregnancy","amount":50000,"deadline":"胎児の心拍が確認された日から2年以内","deadlineDays":730},{"name":"妊婦のための支援給付（2回目）","type":"once","url":"","note":"出産後の訪問のあとに申請する。子1人につき5万円","confidence":"各自治体の公式ページで確認","checked":"2026-11-22","timing":"birth","amount":50000,"deadline":"出産予定日の8週間前から2年以内","deadlineDays":730},{"name":"児童手当","type":"monthly","url":"","note":"3歳未満は月1万5,000円。申請した月の翌月分から支給される","confidence":"各自治体の公式ページで確認","checked":"2026-11-22","amount":15000,"fromAgeMonths":1,"toAgeMonths":36,"deadline":"出生の翌日から15日以内に申請","deadlineDays":15},{"name":"出産育児一時金","type":"once","url":"","note":"加入している健康保険から、子1人につき50万円。多くの場合は医療機関に直接支払われ、出産費用に充てられる","confidence":"各自治体の公式ページで確認","checked":"2026-11-22","timing":"birth","amount":500000,"paidToHospital":true,"deadline":"出産日の翌日から2年以内","deadlineDays":730}]}</script>
+<script>
+// 計算の部分。画面に依存しない。月は「年×12＋(月−1)」の通し番号で扱う
+function ym(y, m) { return y * 12 + (m - 1); }
+function ymText(n) { return Math.floor(n / 12) + "年" + (n % 12 + 1) + "月"; }
+function yen(n) { return Math.round(n).toLocaleString("ja-JP") + "円"; }
+
+// 年収から市民税所得割額（6%換算）を概算する
+function salaryDeduction(s) {
+  if (s <= 1900000) return 650000;
+  if (s <= 3600000) return s * 0.3 + 80000;
+  if (s <= 6600000) return s * 0.2 + 440000;
+  if (s <= 8500000) return s * 0.1 + 1100000;
+  return 1950000;
+}
+function shotokuwariOf(person) {
+  var man = Number(person.amountMan) || 0, s = man * 10000;
+  if (person.work === "none" || s <= 0) return 0;
+  var base = person.work === "self" ? s : s - salaryDeduction(s);
+  return Math.max(0, Math.floor((base - s * 0.15 - 430000) * 0.06));
+}
+function householdShotokuwari(st) {
+  if (st.useDirect) return Math.max(0, Number(st.directShotokuwari) || 0);
+  return shotokuwariOf(st.p1) + shotokuwariOf(st.p2);
+}
+function hasIncome(st) {
+  if (st.useDirect) return true;
+  return [st.p1, st.p2].some(function (p) { return p.work !== "none" && Number(p.amountMan) > 0; });
+}
+
+// 出生後の最初の4月（0歳児クラスが始まる月）
+function firstApril(birth) {
+  var y = Math.floor(birth / 12), m = birth % 12 + 1;
+  return ym(m >= 4 ? y + 1 : y, 4);
+}
+function timeline(st, resident) {
+  var birth = ym(st.birthY, st.birthM), fa = firstApril(birth);
+  var move = ym(st.moveY, st.moveM);
+  var start = st.daycare === "zero" ? fa : st.daycare === "one" ? fa + 12 : null;
+  return { birth: birth, move: move, from: resident ? birth - 12 : move, end: fa + 36, daycareStart: start };
+}
+
+// 給付1件について、受け取れる額と理由を返す
+function benefitAmount(b, st, t, resident) {
+  if (b.offByDefault) return { amt: 0, ok: false, why: "利用する場合だけ対象（最大" + yen(b.amount) + "）" };
+  if (b.onlyForCurrentResidents) return { amt: 0, ok: false, why: resident ? "区内で賃貸住宅へ転居する場合だけ対象（最大" + yen(b.amount) + "）" : "今この自治体に住んでいる世帯だけが対象" };
+  if (t.from >= t.end) return { amt: 0, ok: false, why: "比べる期間のあとの転入" };
+  if (b.type === "monthly") {
+    var a0 = t.birth + b.fromAgeMonths, a1 = t.birth + b.toAgeMonths;
+    if (b.untilDaycare && t.daycareStart != null) a1 = Math.min(a1, t.daycareStart);
+    var n = Math.max(0, Math.min(a1, t.end) - Math.max(a0, t.from));
+    return n > 0 ? { amt: n * b.amount, ok: true, why: "月" + yen(b.amount) + "を" + n + "か月分" } : { amt: 0, ok: false, why: "対象の月齢の間に住んでいない" };
+  }
+  if (b.type === "costcover") {
+    if (t.from > t.birth) return { amt: 0, ok: false, why: "出産の時点で住んでいないため対象外" };
+    var amt = Math.min(b.cap, Math.max(0, st.birthCost - 500000));
+    var why = "出産費用" + yen(st.birthCost) + "から一時金50万円を引いた額（上限" + yen(b.cap) + "）";
+    if (b.minResidenceMonthsAtApplication && !resident) why += "。居住が" + b.minResidenceMonthsAtApplication + "か月を過ぎてから申請";
+    if (b.reducedByInsurerTopUp) why += "。健康保険の付加給付がある場合は減額";
+    return { amt: amt, ok: amt > 0, why: why };
+  }
+  // 一時金
+  if (b.timing === "infant") return t.from < t.birth + 12 ? { amt: b.amount, ok: true, why: "受け取れる" } : { amt: 0, ok: false, why: "子が1歳になる前に住んでいないため対象外" };
+  var e = b.timing === "pregnancy" ? t.birth - 7 : b.timing === "age" ? t.birth + b.atAgeMonths : t.birth;
+  if (t.from > e) return { amt: 0, ok: false, why: b.timing === "pregnancy" ? "妊娠の届出が転入より前のため対象外" : b.timing === "age" ? "対象の月齢が転入より前のため対象外" : "出産の時点で住んでいないため対象外" };
+  if (e >= t.end) return { amt: 0, ok: false, why: "比べる期間に入らない" };
+  if (b.minResidenceMonthsBeforeBirth && !resident && t.birth - t.from < b.minResidenceMonthsBeforeBirth)
+    return { amt: 0, ok: false, why: "出産の" + b.minResidenceMonthsBeforeBirth + "か月前から住んでいることが条件のため対象外" };
+  var w = "受け取れる";
+  if (b.reducedByInsurerTopUp) w += "。健康保険の付加給付がある場合は減額";
+  return { amt: b.amount, ok: true, why: w };
+}
+
+function daycareOf(D, mu, st, t) {
+  var d = mu.daycare.inherit ? D.prefectures[mu.pref].daycare : mu.daycare;
+  var months = t.daycareStart == null ? 0 : Math.max(0, t.end - Math.max(t.daycareStart, t.from));
+  if (d.free) return { fee: 0, months: months, total: 0, free: true, note: d.note, url: d.url, tier: "" };
+  var x = householdShotokuwari(st), fee = 0, tier = "非課税";
+  if (hasIncome(st)) {
+    var row = d.tiers.filter(function (r) { return r.from <= x && (r.to == null || x <= r.to); })[0] || d.tiers[d.tiers.length - 1];
+    fee = row.monthlyFee; tier = row.tier;
+  }
+  return { fee: fee, months: months, total: fee * months, free: false, note: d.condition + "、" + d.period, url: d.url, tier: tier };
+}
+
+// 1つの自治体について、給付、保育料、差し引きを計算する
+function calcMuni(D, mu, st) {
+  var resident = st.current === mu.id, t = timeline(st, resident);
+  function run(list, scope) {
+    return list.map(function (b) { var r = benefitAmount(b, st, t, resident); return { b: b, scope: scope, amt: r.amt, ok: r.ok, why: r.why }; });
+  }
+  var items = run(D.prefectures[mu.pref].benefits || [], mu.pref).concat(run(mu.benefits, mu.name));
+  // 全国共通の給付は、どの自治体に住んでいても受け取れるので、転入の時期で対象外にしない
+  var tAll = { birth: t.birth, move: t.move, from: t.birth - 12, end: t.end, daycareStart: t.daycareStart };
+  var national = D.national.map(function (b) { var r = benefitAmount(b, st, tAll, true); return { b: b, scope: "全国共通", amt: r.amt, ok: r.ok, why: r.why }; });
+  var own = items.reduce(function (s, x) { return s + x.amt; }, 0);
+  var nat = national.filter(function (x) { return !x.b.paidToHospital; }).reduce(function (s, x) { return s + x.amt; }, 0);
+  var dc = daycareOf(D, mu, st, t);
+  return { mu: mu, t: t, resident: resident, items: items, national: national, own: own, nationalTotal: nat, daycare: dc, net: own - dc.total,
+           months: Math.max(1, t.end - Math.max(t.move, t.birth - 12)) };
+}
+function ranking(D, st) {
+  var rows = D.municipalities.map(function (m) { return calcMuni(D, m, st); });
+  rows.sort(function (a, b) { return b.net - a.net; });
+  var base = rows.filter(function (r) { return r.resident; })[0] || rows[0];
+  rows.forEach(function (r, i) { r.rank = i + 1; r.diff = base.net - r.net; r.perMonth = r.diff / r.months; r.isBase = r === base; });
+  return { rows: rows, base: base };
+}
+
+</script>
+<script>
+var D = JSON.parse(document.getElementById("data").textContent);
+var S = { open: {}, tab: "kuraberu", current: "other", target: "shinagawa", birthY: 2027, birthM: 6, moveY: 2027, moveM: 1, daycare: "one", birthCost: 650000,
+  useDirect: false, directShotokuwari: 300000, p1: { work: "salary", amountMan: 600 }, p2: { work: "salary", amountMan: 400 }, openMore: false };
+var TABS = [["kuraberu", "どこに住むか、まだ迷っている", "28の区と市を、もらえるお金で比べます"], ["kimatteiru", "住む区や市は、もう決まっている", "そこでもらえるお金と、申請の期限を確かめます"]];
+var $nav = document.getElementById("nav"), $form = document.getElementById("form"), $main = document.getElementById("main");
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+// 金額を「54万6,000円」の形で書く
+function man(n) {
+  n = Math.round(n); var neg = n < 0; n = Math.abs(n);
+  var m = Math.floor(n / 10000), r = n % 10000;
+  var t = m ? m.toLocaleString("ja-JP") + "万" + (r ? r.toLocaleString("ja-JP") : "") + "円" : r.toLocaleString("ja-JP") + "円";
+  return (neg ? "−" : "") + t;
+}
+// 月額はおおよその額で書く（千円単位）
+function manRough(n) { n = Math.round(Math.abs(n) / 1000) * 1000; return n >= 10000 ? (n / 10000).toLocaleString("ja-JP") + "万円" : n.toLocaleString("ja-JP") + "円"; }
+function opt(v, label, cur) { return '<option value="' + esc(v) + '"' + (String(v) === String(cur) ? " selected" : "") + ">" + esc(label) + "</option>"; }
+function sel(id, opts, cur) { return '<select id="' + id + '" data-k="' + id + '">' + opts.map(function (o) { return opt(o[0], o[1], cur); }).join("") + "</select>"; }
+function fld(label, html, hint) { return '<label class="f"><span class="lab">' + esc(label) + "</span>" + html + (hint ? '<span class="hint">' + esc(hint) + "</span>" : "") + "</label>"; }
+function years() { var a = []; for (var y = 2026; y <= 2029; y++) a.push([y, y + "年"]); return a; }
+function months() { var a = []; for (var m = 1; m <= 12; m++) a.push([m, m + "月"]); return a; }
+function muniOpts(withOther) { var a = D.municipalities.map(function (m) { return [m.id, m.name]; }); return withOther ? [["other", "この中にない"]].concat(a) : a; }
+var WORK = [["salary", "会社員など"], ["self", "自営業など"], ["none", "働いていない"]];
+function incomeOpts() { var a = []; for (var v = 100; v <= 2000; v += 100) a.push([v, v + "万円"]); return a; }
+function muniById(id) { return D.municipalities.filter(function (m) { return m.id === id; })[0]; }
+
+function renderForm() {
+  var h = '<div class="grid">';
+  if (S.tab === "kimatteiru") h += fld("住む区・市", sel("target", muniOpts(false), S.target));
+  h += fld("今住んでいる区・市", sel("current", muniOpts(true), S.current));
+  h += fld("出産の予定", '<span class="pair">' + sel("birthY", years(), S.birthY) + sel("birthM", months(), S.birthM) + "</span>");
+  h += fld("引っ越す予定の時期", '<span class="pair">' + sel("moveY", years(), S.moveY) + sel("moveM", months(), S.moveM) + "</span>", "今の区や市に住み続ける場合は、記入不要です");
+  h += fld("保育園に預け始める時期", sel("daycare", [["zero", "0歳の4月から"], ["one", "1歳の4月から"], ["none", "預けない"]], S.daycare));
+  [["p1", "夫"], ["p2", "妻"]].forEach(function (p) {
+    h += fld(p[1] + "の働き方と" + (S[p[0]].work === "self" ? "所得（売上から経費を引いた額）" : "年収"), '<span class="pair">' + sel(p[0] + ".work", WORK, S[p[0]].work) + (S[p[0]].work === "none" ? "" : sel(p[0] + ".amountMan", incomeOpts(), S[p[0]].amountMan)) + "</span>",
+      p[0] === "p2" ? "産休や育休に入る前の年収で選んでください" : "");
+  });
+  h += "</div>";
+  h += '<details id="more"' + (S.openMore ? " open" : "") + '><summary>くわしい設定（変えなくても計算できます）</summary><div class="grid" style="margin-top:10px">';
+  h += fld("出産にかかる費用（円）", '<input id="birthCost" data-k="birthCost" type="number" inputmode="numeric" min="0" step="10000" value="' + esc(S.birthCost) + '">', "分からない場合は65万円のままで構いません。病院の案内に金額があれば、その額に変えてください");
+  h += '<label class="f check"><input id="useDirect" data-k="useDirect" type="checkbox"' + (S.useDirect ? " checked" : "") + "><span>住民税の通知書が手元にあり、所得割額を自分で入れる</span></label>";
+  if (S.useDirect) h += fld("世帯の市民税の所得割額（円、年額）", '<input id="directShotokuwari" data-k="directShotokuwari" type="number" inputmode="numeric" min="0" step="1000" value="' + esc(S.directShotokuwari) + '">', "夫婦の通知書にある市民税の所得割額を足した額です");
+  h += '</div><p class="sub" style="margin-top:8px">保育料は、年収から計算した市民税の所得割額（年' + man(householdShotokuwari(S)) + "）で決めています。</p></details>";
+  $form.innerHTML = h;
+}
+function waitPill(m) {
+  var w = m.waitingChildren.count;
+  return '<span class="pill ' + (w === 0 ? "good" : w < 30 ? "warn" : "bad") + '">待機児童 ' + w + "人</span>";
+}
+function confPill(b) { return '<span class="pill ' + (b.confidence === "公式" ? "good" : "mute") + '">' + esc(b.confidence === "公式" ? "公式ページで確認済み" : "区や市のページで確認済み") + "</span>"; }
+function itemRows(list) {
+  return list.map(function (x) {
+    return '<span class="' + (x.amt ? "" : "zero") + '"><strong>' + esc(x.b.name) + "</strong>（" + esc(x.scope) + "）<br>" + esc(x.why)
+      + (x.b.url ? ' <a href="' + esc(x.b.url) + '" target="_blank" rel="noopener">公式ページ</a>' : "") + "</span>"
+      + '<span class="amt ' + (x.amt ? "" : "zero") + '">' + man(x.amt) + "</span>";
+  }).join("");
+}
+function daycareLine(r) {
+  var d = r.daycare;
+  if (!d.months) return '<span><strong>保育料</strong><br>預けないので、かかりません</span><span class="amt">0円</span>';
+  return "<span><strong>保育料</strong><br>" + (d.free ? "0歳から2歳まで無料です" : "月" + man(d.fee) + "を" + d.months + "か月分")
+    + (d.url ? ' <a href="' + esc(d.url) + '" target="_blank" rel="noopener">公式ページ</a>' : "") + '</span><span class="amt">−' + man(d.total) + "</span>";
+}
+var HOMES_SLUG = { yokohama: "kanagawa/yokohama-mcity", kawasaki: "kanagawa/kawasaki-mcity", ichikawa: "chiba/ichikawa-city", urayasu: "chiba/urayasu-city", nagareyama: "chiba/nagareyama-city" };
+var SUUMO_SLUG = { yokohama: "chintai/kanagawa/sa_yokohama", kawasaki: "chintai/kanagawa/sa_kawasaki", ichikawa: "chintai/chiba/sc_ichikawa", urayasu: "chintai/chiba/sc_urayasu", nagareyama: "chintai/chiba/sc_nagareyama" };
+function homesUrl(m) { return "https://www.homes.co.jp/chintai/" + (HOMES_SLUG[m.id] || "tokyo/" + m.id + "-city") + "/price/"; }
+function suumoUrl(m) { return "https://suumo.jp/" + (SUUMO_SLUG[m.id] || "chintai/tokyo/sc_" + m.id) + "/"; }
+function outLink(m, dest, place, label, cls) { return '<a' + (cls ? ' class="' + cls + '"' : "") + ' href="' + (dest === "suumo" ? suumoUrl(m) : homesUrl(m)) + '" target="_blank" rel="noopener" data-track="' + place + '" data-dest="' + dest + '" data-muni="' + m.id + '">' + label + "</a>"; }
+function track(ev, d) { try { d = d || {}; d.ev = ev; d.tab = S.tab; var s = JSON.stringify(d); if (navigator.sendBeacon) navigator.sendBeacon("/t", s); } catch (e) {} }
+function searchLink(m) { return '<div style="display:flex;gap:8px;flex-wrap:wrap">' + outLink(m, "suumo", "bukken", esc(m.name) + "の賃貸をSUUMOで見る", "btn") + outLink(m, "homes", "bukken", esc(m.name) + "の賃貸をホームズで見る", "btn ghost") + "</div>"; }
+function remarks(m) { return m.remarks.length ? "<h3>ほかに知っておくとよいこと</h3><ul>" + m.remarks.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : ""; }
+function diffCell(r, base) {
+  if (r.isBase) return '<span class="sub">この区・市と比べています</span>';
+  if (Math.abs(r.perMonth) < 500) return "ほぼ同じ";
+  return "<strong>" + man(Math.abs(r.diff)) + (r.diff > 0 ? "少ない" : "多い") + '</strong><div class="sub">1か月あたり約' + manRough(r.perMonth) + "</div>";
+}
+function diffCellRent(r) {
+  if (r.isBase) return '<span class="sub">この区・市と比べています</span>';
+  if (Math.abs(r.adjDiff) < 10000) return "ほぼ同じ";
+  return "<strong>" + man(Math.abs(r.adjDiff)) + (r.adjDiff > 0 ? "少ない" : "多い") + '</strong><div class="sub">家賃相場の差を入れた金額</div>';
+}
+function rentHint(r, base) {
+  if (r.isBase || r.diff < 1000) return "";
+  return esc(base.mu.name) + "より" + man(r.diff) + "少なくなります。1か月あたり約" + manRough(r.perMonth) + "の差です。家賃の目安は、" + esc(base.mu.name) + (Math.abs(base.mu.rent.rooms3PrivateEst - r.mu.rent.rooms3PrivateEst) < 1000 ? "とほぼ同じです" : "より月約" + manRough(base.mu.rent.rooms3PrivateEst - r.mu.rent.rooms3PrivateEst) + (base.mu.rent.rooms3PrivateEst > r.mu.rent.rooms3PrivateEst ? "安いです" : "高いです"));
+}
+function rentCell(m) {
+  return '<td class="num"><strong>月' + manRough(m.rent.rooms3PrivateEst) + '</strong><div class="sub">今の相場を見る<br>' + outLink(m, "suumo", "souba", "SUUMO") + " ／ " + outLink(m, "homes", "souba", "ホームズ") + '</div></td>';
+}
+function detailBox(r) {
+  var rows = r.items.map(function (x) {
+    return '<div class="it' + (x.amt ? "" : " zero") + '"><div class="n"><strong>' + esc(x.b.name) + '</strong><span class="who">' + esc(x.scope) + '</span></div><div class="w">' + esc(x.why) + (x.b.url ? ' <a href="' + esc(x.b.url) + '" target="_blank" rel="noopener">公式ページ</a>' : "") + '</div><div class="a">' + (x.amt ? man(x.amt) : "対象外") + "</div></div>";
+  }).join("");
+  var d = r.daycare, dc = !d.months ? "預けないので、かかりません" : d.free ? "0歳から2歳まで無料です" : "月" + man(d.fee) + "を" + d.months + "か月分";
+  return '<div class="dbox"><div class="dhead"><strong>' + esc(r.mu.name) + "の内訳</strong></div>"
+    + '<div class="dgroup">もらえるお金</div>' + rows
+    + '<div class="it sum"><div class="n"><strong>もらえるお金の合計</strong></div><div class="w"></div><div class="a">' + man(r.own) + "</div></div>"
+    + '<div class="dgroup">保育料</div><div class="it"><div class="n"><strong>保育料</strong><span class="who">' + esc(r.mu.name) + '</span></div><div class="w">' + dc + (d.url ? ' <a href="' + esc(d.url) + '" target="_blank" rel="noopener">公式ページ</a>' : "") + '</div><div class="a">' + (d.total ? "−" + man(d.total) : "0円") + "</div></div>"
+    + '<div class="it total"><div class="n"><strong>もらえるお金 − 保育料</strong></div><div class="w"></div><div class="a">' + man(r.net) + "</div></div>"
+    + remarks(r.mu) + '<div class="cta" style="margin-top:14px">' + searchLink(r.mu) + "</div></div>";
+}
+function periodText(r) { return "お子さんが3歳になった最初の4月までの合計です。"; }
+function pickCard(label, r, reason) {
+  return '<div class="tile"><div class="sub">' + esc(label) + "</div><strong class=\"pickname\">" + esc(r.mu.name) + '</strong><div class="big">' + man(r.net) + '</div><div class="sub">' + reason + "</div><div style=\"margin-top:6px\">" + waitPill(r.mu) + "</div></div>";
+}
+function viewRanking() {
+  var R = ranking(D, S), base = R.base, top = R.rows[0];
+  var zero = R.rows.filter(function (r) { return r.mu.waitingChildren.count === 0; });
+  var easy = zero[0] === top ? zero[1] : zero[0];
+  var outside = R.rows.filter(function (r) { return r.mu.pref !== "東京都"; })[0];
+  var rows = R.rows.slice();
+  rows.forEach(function (r) { r.rentSave = Math.round((base.mu.rent.rooms3PrivateEst - r.mu.rent.rooms3PrivateEst) * r.months / 10000) * 10000; r.adjDiff = r.diff - r.rentSave; r.shown = r.rank; });
+  if (S.withRent) { rows.sort(function (x, y) { return x.adjDiff - y.adjDiff; }); rows.forEach(function (r, i) { r.shown = i + 1; }); }
+  var h = '<section class="panel"><h2>ご家庭の条件でのおすすめ</h2><p class="lead">金額は、もらえるお金から保育料を引いた額です。' + periodText(top) + '</p><div class="tiles" style="margin-top:10px">'
+    + pickCard("もらえるお金がいちばん多い", top, top.mu.waitingChildren.count >= 30 ? "保育園に入れなかった子が多い区です。入れなかった場合の預け先も考えておくと安心です" : "区や市の独自の給付が多く、保育料もかかりません")
+    + (easy ? pickCard("保育園の待機児童が0人で、お金も多い", easy, "待機児童が0人の区と市の中で、" + (zero[0] === top ? "2番目" : "いちばん") + "多い金額です") : "")
+    + (outside ? pickCard("東京都の外でいちばん多い", outside, rentHint(outside, base)) : "")
+    + "</div></section>";
+  h += '<section class="panel"><h2>もらえるお金が多い順に見る</h2><p class="lead">東京23区と5つの市を、もらえるお金から保育料を引いた金額が多い順に並べました。' + (base.resident ? "今住んでいる" : "いちばん多い") + esc(base.mu.name) + 'との差も分かります。</p><label class="switch"><input type="checkbox" id="withRent" data-rent' + (S.withRent ? " checked" : "") + '><span class="knob" aria-hidden="true"></span><span><strong>家賃相場の差も入れて比べる</strong><span class="sub">' + (S.withRent ? esc(base.mu.name) + "との家賃相場の差に、計算している月数を掛けて足し引きし、その金額の順に並べています。家賃相場は統計からの推計です。" : "家賃が安い区や市に住むと、もらえるお金の差を取り戻せるかが分かります。") + '</span></span></label><p class="sub" style="margin:6px 0">待機児童は、申し込んでも保育園に入れなかった子の人数です（2026年4月）。</p><div class="tablebox"><table class="rank"><thead><tr><th>順位</th><th>区・市</th><th class="num">もらえるお金−保育料</th><th>' + esc(base.mu.name) + 'との差' + (S.withRent ? "（家賃相場の差込み）" : "") + '</th><th>保育園</th><th class="num">家賃の目安</th><th></th></tr></thead><tbody>';
+  rows.forEach(function (r) {
+    h += '<tr class="' + (r.isBase ? "base" : "") + '"><td><span class="rk' + (r.shown <= 3 ? " top" : "") + '">' + r.shown + "</span></td><td><strong>" + esc(r.mu.name) + '</strong></td><td class="num"><strong>' + man(r.net) + '</strong><div class="sub">もらえるお金 ' + man(r.own) + "<br>保育料 " + man(r.daycare.total) + (S.withRent && !r.isBase ? "<br>家賃相場の差 " + (r.rentSave > 0 ? "＋" : r.rentSave < 0 ? "−" : "") + man(Math.abs(r.rentSave)) : "") + '</div></td><td class="c-diff" data-l="' + esc(base.mu.name) + 'との差">' + (S.withRent ? diffCellRent(r) : diffCell(r, base)) + "</td><td>" + waitPill(r.mu) + "</td>" + rentCell(r.mu)
+      + '<td><button class="more" type="button" data-open="' + r.mu.id + '" aria-expanded="' + !!S.open[r.mu.id] + '">' + (S.open[r.mu.id] ? "とじる" : "くわしく見る") + "</button></td></tr>"
+      + (S.open[r.mu.id] ? '<tr class="detail"><td colspan="7">' + detailBox(r) + "</td></tr>" : "");
+  });
+  h += "</tbody></table></div><p class=\"sub\" style=\"margin-top:8px\">児童手当など、全国どこでも同じ金額のお金は、この順位には入れていません。</p><p class=\"sub\">家賃の目安は、民間の賃貸で3部屋（2LDKや3DKなど）に今住んでいる人が払っている家賃を、国の住宅・土地統計調査（2023年10月）から当サイトが計算した推計です。3部屋の賃貸の平均に、区や市ごとの民間の賃貸と賃貸全体の家賃の比率を掛けています。長く住んでいる人の家賃も入るため、今から借りる場合の家賃より安く出ます。「家賃相場の差も入れて比べる」を入れたときだけ、順位に使います。</p></section>";
+  h += reportBox("気になる区や市について");
+  return h;
+}
+function reportBox(lead) {
+  return '<section class="panel"><h2>申請の時期と必要な書類を1枚にまとめたレポート</h2><p class="lead">' + lead + '、もらえるお金ごとの申請の時期、窓口、必要な書類を1枚にまとめます。申請の漏れを防ぐために使えます。</p><div class="cta" style="margin-top:8px"><a class="btn" href="#kimatteiru" data-track="report">レポートの見本を見る（準備中）</a></div></section>';
+}
+function viewOne() {
+  var mu = muniById(S.target), r = calcMuni(D, mu, S);
+  var all = r.national.concat(r.items), cash = r.own + r.nationalTotal;
+  var h = '<div class="tiles"><div class="tile"><div class="sub">' + esc(mu.name) + 'でもらえるお金の合計</div><div class="big">' + man(cash) + '</div><div class="sub">全国共通のお金 ' + man(r.nationalTotal) + "、東京都や" + esc(mu.name) + "の独自のお金 " + man(r.own) + "。病院に直接支払われる出産育児一時金は入れていません</div></div>"
+    + '<div class="tile"><div class="sub">保育料の合計</div><div class="big">' + man(r.daycare.total) + '</div><div class="sub">' + (r.daycare.months ? (r.daycare.free ? "0歳から2歳まで無料です" : "月" + man(r.daycare.fee) + "を" + r.daycare.months + "か月分") : "預けないので、かかりません") + "</div></div>"
+    + '<div class="tile"><div class="sub">保育園の入りやすさ</div><div style="margin:4px 0">' + waitPill(mu) + '</div><div class="sub">申し込んでも入れなかった子の人数です（2026年4月）。前の年から' + (mu.waitingChildren.changeFromLastYear > 0 ? mu.waitingChildren.changeFromLastYear + "人増えました" : "変わっていません") + "</div></div></div>";
+  var todo = all.filter(function (x) { return x.ok && x.b.deadlineDays != null; }).sort(function (a, b) { return a.b.deadlineDays - b.b.deadlineDays; }).slice(0, 5);
+  h += '<section class="panel"><h2>先に申請しておきたいもの</h2><p class="lead">期限が短いものから順に並べています。出産の前後は忙しいので、早めに確認しておくと安心です。</p><ol class="todo">'
+    + todo.map(function (x) { return "<li><strong>" + esc(x.b.name) + "</strong>（" + man(x.amt) + '）<div class="sub">' + esc(x.b.deadline) + "</div></li>"; }).join("") + "</ol></section>";
+  h += '<section class="panel"><h2>' + esc(mu.name) + 'で出産するともらえるお金</h2><p class="lead">' + (r.resident ? "今" + esc(mu.name) + "に住んでいる場合" : ymText(r.t.move) + "に引っ越す場合") + "で、" + ymText(r.t.birth) + "の出産から" + ymText(r.t.end) + 'までを計算しています。</p><div class="tablebox"><table><thead><tr><th>もらえるお金</th><th class="num">金額</th><th>もらえる条件</th><th>申請の期限</th><th>確認</th></tr></thead><tbody>';
+  all.forEach(function (x) {
+    h += "<tr><td><strong>" + esc(x.b.name) + '</strong><div class="sub">' + esc(x.scope) + '</div></td><td class="num">' + (x.amt ? "<strong>" + man(x.amt) + "</strong>" : '<span class="pill mute">もらえません</span>') + (x.b.paidToHospital ? '<div class="sub">病院に直接支払い</div>' : "") + "</td><td>" + esc(x.why) + '<div class="sub">' + esc(x.b.note) + "</div></td><td>" + (x.b.deadline ? esc(x.b.deadline) : '<span class="sub">調査中です。公式ページで確認してください</span>') + "</td><td>" + confPill(x.b) + (x.b.url ? '<div><a href="' + esc(x.b.url) + '" target="_blank" rel="noopener">公式ページ</a></div>' : "") + "</td></tr>";
+  });
+  h += "</tbody></table></div>" + remarks(mu) + '<div class="cta" style="margin-top:10px"><a class="btn ghost" href="#kuraberu">ほかの区や市と比べる</a></div></section>';
+  h += reportBox(esc(mu.name) + "について");
+  return h;
+}
+function render() {
+  $nav.innerHTML = TABS.map(function (t) { return '<button role="tab" data-tab="' + t[0] + '" aria-selected="' + (S.tab === t[0]) + '"><strong>' + t[1] + "</strong><span>" + t[2] + "</span></button>"; }).join("");
+  renderForm();
+  renderGap();
+  $main.innerHTML = '<div style="display:flex;flex-direction:column;gap:14px">' + (S.tab === "kuraberu" ? viewRanking() : viewOne()) + "</div>";
+}
+function renderGap() {
+  var R = ranking(D, S), hi = R.rows[0], lo = R.rows[R.rows.length - 1];
+  var mx = Math.max(Math.abs(hi.net), Math.abs(lo.net), 1), span = (hi.net > 0 ? hi.net : 0) + (lo.net < 0 ? -lo.net : 0) || 1, zero = (lo.net < 0 ? -lo.net : 0) / span * 100;
+  function row(r) { var w = Math.abs(r.net) / span * 100; return '<span class="nm">' + esc(r.mu.name) + '</span><span class="track"><span class="bar ' + (r.net >= 0 ? "pos" : "neg") + '" style="left:' + (r.net >= 0 ? zero : zero - w) + "%;width:" + w + '%"></span><span class="zero" style="left:' + zero + '%"></span></span><span class="v">' + man(r.net) + "</span>"; }
+  document.getElementById("gap").innerHTML = '<div class="cap">いまの条件で、もらえる金額がいちばん多い区や市と、いちばん少ない区や市の差</div><div class="diff">' + man(hi.net - lo.net) + "<small>の差</small></div>" + '<div class="bars">' + row(hi) + row(lo) + '</div><p class="note">もらえるお金から保育料を引いた金額です。' + periodText(hi) + "下でご家庭の条件を変えると、この金額も変わります。</p>";
+}
+function setTab(t) { S.tab = t === "kimatteiru" ? "kimatteiru" : "kuraberu"; render(); }
+$nav.addEventListener("click", function (e) { var b = e.target.closest("[data-tab]"); if (b) { location.hash = b.getAttribute("data-tab"); setTab(b.getAttribute("data-tab")); } });
+$form.addEventListener("toggle", function (e) { if (e.target.id === "more") S.openMore = e.target.open; }, true);
+$form.addEventListener("change", function (e) {
+  var k = e.target.getAttribute("data-k"); if (!k) return;
+  var v = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+  if (["birthY", "birthM", "moveY", "moveM", "birthCost", "directShotokuwari"].indexOf(k) >= 0 || /amountMan$/.test(k)) v = Number(v);
+  var p = k.split("."); if (p.length === 2) S[p[0]][p[1]] = v; else S[k] = v;
+  render();
+  var el = document.getElementById(k); if (el) el.focus();
+});
+window.addEventListener("hashchange", function () { setTab(location.hash.slice(1)); });
+setTab(location.hash.slice(1));
+document.addEventListener("click", function (e) { var a = e.target.closest("a[data-track]"); if (a) track("out", { place: a.getAttribute("data-track"), dest: a.getAttribute("data-dest") || "", muni: a.getAttribute("data-muni") || "" }); });
+$main.addEventListener("change", function (e) { if (e.target.hasAttribute("data-rent")) { S.withRent = e.target.checked; render(); var el = document.getElementById("withRent"); if (el) el.focus(); track("rent", { place: S.withRent ? "on" : "off" }); } });
+$main.addEventListener("click", function (e) { var o = e.target.closest("[data-open]"); if (o) { var id = o.getAttribute("data-open"); S.open[id] = !S.open[id]; render(); var nb = $main.querySelector('[data-open="' + id + '"]'); if (nb) nb.focus(); } });
+document.addEventListener("click", function (e) { var g = e.target.closest("[data-go]"); if (g) { var el = document.getElementById(g.getAttribute("data-go")); if (el) el.scrollIntoView(); } });
+track("view", {});
+</script>
+</body>
+</html>
