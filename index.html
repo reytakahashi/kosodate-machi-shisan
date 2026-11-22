@@ -225,6 +225,16 @@ ol.todo li::before{content:counter(todo);position:absolute;left:14px;top:13px;wi
   .it.sum .w,.it.total .w{display:none}
 }
 
+.areabox{margin:16px 0 6px}
+.areabox .t{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.areabox .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.chip{font:inherit;font-size:14px;line-height:1;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid var(--line-strong);border-radius:999px;background:var(--panel);color:var(--ink);cursor:pointer}
+.chip span{font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums}
+.chip:hover{border-color:var(--accent)}
+.chip.on{border-color:var(--accent);background:var(--accent);color:var(--accent-ink);font-weight:700}
+.chip.on span{color:var(--accent-ink);opacity:.85}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
 .machilist{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .machilist a{font-size:14px;text-decoration:none;color:var(--ink);border:1px solid var(--line-strong);border-radius:999px;padding:5px 14px;background:var(--panel)}
 .machilist a:hover{border-color:var(--accent);background:var(--accent-weak)}
@@ -383,7 +393,7 @@ function ranking(D, st) {
 </script>
 <script>
 var D = JSON.parse(document.getElementById("data").textContent);
-var S = { open: {}, tab: "kuraberu", current: "other", target: "shinagawa", birthY: 2027, birthM: 6, moveY: 2027, moveM: 1, daycare: "one", birthCost: 650000,
+var S = { area: {}, open: {}, tab: "kuraberu", current: "other", target: "shinagawa", birthY: 2027, birthM: 6, moveY: 2027, moveM: 1, daycare: "one", birthCost: 650000,
   useDirect: false, directShotokuwari: 300000, p1: { work: "salary", amountMan: 600 }, p2: { work: "salary", amountMan: 400 }, openMore: false };
 var TABS = [["kuraberu", "どこに住むか、まだ迷っている", "35の区と市を、もらえるお金で比べます"], ["kimatteiru", "住む区や市は、もう決まっている", "そこでもらえるお金と、申請の期限を確かめます"]];
 var $nav = document.getElementById("nav"), $form = document.getElementById("form"), $main = document.getElementById("main");
@@ -486,7 +496,10 @@ function pickCard(label, r, reason) {
   return '<div class="tile"><div class="sub">' + esc(label) + "</div><strong class=\"pickname\">" + esc(r.mu.name) + '</strong><div class="big">' + man(r.net) + '</div><div class="sub">' + reason + "</div><div style=\"margin-top:6px\">" + waitPill(r.mu) + "</div></div>";
 }
 function viewRanking() {
-  var R = ranking(D, S), base = R.base, top = R.rows[0];
+  var anyArea = AREAS.some(function (a) { return S.area[a[0]]; });
+  var Df = D;
+  if (anyArea) { Df = {}; for (var k in D) Df[k] = D[k]; Df.municipalities = D.municipalities.filter(function (m) { return S.area[areaOf(m)] || m.id === S.current; }); }
+  var R = ranking(Df, S), base = R.base, top = R.rows[0];
   var zero = R.rows.filter(function (r) { return r.mu.waitingChildren.count === 0; });
   var easy = zero[0] === top ? zero[1] : zero[0];
   var outside = R.rows.filter(function (r) { return r.mu.pref !== "東京都"; })[0];
@@ -498,7 +511,7 @@ function viewRanking() {
     + (easy ? pickCard("保育園の待機児童が0人で、お金も多い", easy, "待機児童が0人の区と市の中で、" + (zero[0] === top ? "2番目" : "いちばん") + "多い金額です") : "")
     + (outside ? pickCard("東京都の外でいちばん多い", outside, rentHint(outside, base)) : "")
     + "</div></section>";
-  h += '<section class="panel"><h2>もらえるお金が多い順に見る</h2><p class="lead">東京23区と5つの市を、もらえるお金から保育料を引いた金額が多い順に並べました。' + (base.resident ? "今住んでいる" : "いちばん多い") + esc(base.mu.name) + 'との差も分かります。</p><label class="switch"><input type="checkbox" id="withRent" data-rent' + (S.withRent ? " checked" : "") + '><span class="knob" aria-hidden="true"></span><span><strong>家賃相場の差も入れて比べる</strong><span class="sub">' + (S.withRent ? esc(base.mu.name) + "との家賃相場の差に、計算している月数を掛けて足し引きし、その金額の順に並べています。家賃相場は統計からの推計です。" : "家賃が安い区や市に住むと、もらえるお金の差を取り戻せるかが分かります。") + '</span></span></label><p class="sub" style="margin:6px 0">待機児童は、申し込んでも保育園に入れなかった子の人数です（2026年4月）。</p><div class="tablebox"><table class="rank"><thead><tr><th>順位</th><th>区・市</th><th class="num">もらえるお金−保育料</th><th>' + esc(base.mu.name) + 'との差' + (S.withRent ? "（家賃相場の差込み）" : "") + '</th><th>保育園</th><th class="num">家賃の目安</th><th></th></tr></thead><tbody>';
+  h += '<section class="panel"><h2>もらえるお金が多い順に見る</h2><p class="lead">' + (anyArea ? "選んだ地域の" + R.rows.length + "の区と市" : D.municipalities.length + "の区と市") + 'を、もらえるお金から保育料を引いた金額が多い順に並べました。' + (base.resident ? "今住んでいる" : "いちばん多い") + esc(base.mu.name) + 'との差も分かります。</p>' + areaBox(anyArea) + '<label class="switch"><input type="checkbox" id="withRent" data-rent' + (S.withRent ? " checked" : "") + '><span class="knob" aria-hidden="true"></span><span><strong>家賃相場の差も入れて比べる</strong><span class="sub">' + (S.withRent ? esc(base.mu.name) + "との家賃相場の差に、計算している月数を掛けて足し引きし、その金額の順に並べています。家賃相場は統計からの推計です。" : "家賃が安い区や市に住むと、もらえるお金の差を取り戻せるかが分かります。") + '</span></span></label><p class="sub" style="margin:6px 0">待機児童は、申し込んでも保育園に入れなかった子の人数です（2026年4月）。</p><div class="tablebox"><table class="rank"><thead><tr><th>順位</th><th>区・市</th><th class="num">もらえるお金−保育料</th><th>' + esc(base.mu.name) + 'との差' + (S.withRent ? "（家賃相場の差込み）" : "") + '</th><th>保育園</th><th class="num">家賃の目安</th><th></th></tr></thead><tbody>';
   rows.forEach(function (r) {
     h += '<tr class="' + (r.isBase ? "base" : "") + '"><td><span class="rk' + (r.shown <= 3 ? " top" : "") + '">' + r.shown + "</span></td><td><strong>" + esc(r.mu.name) + '</strong></td><td class="num"><strong>' + man(r.net) + '</strong><div class="sub">もらえるお金 ' + man(r.own) + "<br>保育料 " + man(r.daycare.total) + (S.withRent && !r.isBase ? "<br>家賃相場の差 " + (r.rentSave > 0 ? "＋" : r.rentSave < 0 ? "−" : "") + man(Math.abs(r.rentSave)) : "") + '</div></td><td class="c-diff" data-l="' + esc(base.mu.name) + 'との差">' + (S.withRent ? diffCellRent(r) : diffCell(r, base)) + "</td><td>" + waitPill(r.mu) + "</td>" + rentCell(r.mu)
       + '<td><button class="more" type="button" data-open="' + r.mu.id + '" aria-expanded="' + !!S.open[r.mu.id] + '">' + (S.open[r.mu.id] ? "とじる" : "くわしく見る") + "</button></td></tr>"
@@ -527,6 +540,16 @@ function viewOne() {
   h += "</tbody></table></div>" + remarks(mu) + '<div class="cta" style="margin-top:10px"><a class="btn ghost" href="#kuraberu">ほかの区や市と比べる</a></div></section>';
   h += reportBox(esc(mu.name) + "について");
   return h;
+}
+var AREAS = [["ku", "東京23区"], ["tama", "東京の市"], ["kanagawa", "神奈川県"], ["saitama", "埼玉県"], ["chiba", "千葉県"]];
+function areaOf(m) { return m.pref === "東京都" ? (/区$/.test(m.name) ? "ku" : "tama") : m.pref === "神奈川県" ? "kanagawa" : m.pref === "埼玉県" ? "saitama" : "chiba"; }
+function areaBox(any) {
+  var h = '<div class="areabox" role="group" aria-label="地域をしぼる"><div class="t">地域をしぼる</div><div class="chips"><button type="button" class="chip' + (any ? "" : " on") + '" data-area="all" aria-pressed="' + !any + '">すべて<span>' + D.municipalities.length + "</span></button>";
+  AREAS.forEach(function (a) {
+    var n = D.municipalities.filter(function (m) { return areaOf(m) === a[0]; }).length;
+    if (n) h += '<button type="button" class="chip' + (S.area[a[0]] ? " on" : "") + '" data-area="' + a[0] + '" aria-pressed="' + !!S.area[a[0]] + '">' + a[1] + "<span>" + n + "</span></button>";
+  });
+  return h + '</div><div class="sub">いくつでも選べます。' + (any && S.current !== "other" ? "今住んでいる区や市は、地域の外でも表に残します。" : "") + "</div></div>";
 }
 function render() {
   $nav.innerHTML = TABS.map(function (t) { return '<button role="tab" data-tab="' + t[0] + '" aria-selected="' + (S.tab === t[0]) + '"><strong>' + t[1] + "</strong><span>" + t[2] + "</span></button>"; }).join("");
@@ -557,6 +580,7 @@ document.addEventListener("click", function (e) { var a = e.target.closest("a[da
 $main.addEventListener("change", function (e) { if (e.target.hasAttribute("data-rent")) { S.withRent = e.target.checked; render(); var el = document.getElementById("withRent"); if (el) el.focus(); track("rent", { place: S.withRent ? "on" : "off" }); } });
 $main.addEventListener("click", function (e) { var o = e.target.closest("[data-open]"); if (o) { var id = o.getAttribute("data-open"); S.open[id] = !S.open[id]; render(); var nb = $main.querySelector('[data-open="' + id + '"]'); if (nb) nb.focus(); } });
 document.addEventListener("click", function (e) { var g = e.target.closest("[data-go]"); if (g) { var el = document.getElementById(g.getAttribute("data-go")); if (el) el.scrollIntoView(); } });
+$main.addEventListener("click", function (e) { var c = e.target.closest("[data-area]"); if (c) { var a = c.getAttribute("data-area"); if (a === "all") S.area = {}; else S.area[a] = !S.area[a]; render(); var nb = $main.querySelector('[data-area="' + a + '"]'); if (nb) nb.focus(); } });
 track("view", {});
 </script>
 </body>
