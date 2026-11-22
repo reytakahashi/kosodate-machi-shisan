@@ -6,3 +6,5 @@ kosodate-machi-shisan.com の公開用ファイル。Cloudflare Pages で公開�
 - `about/index.html`：運営者情報と個人情報の扱い
 - `functions/t.js`：押された回数を受け取るプログラム。D1 のデータベースを `DB` という名前でつなぐと記録が始まる
 - `schema.sql`：記録用の表の定義
+
+更新の手順：main に送ると Cloudflare Pages が自動で公開する。
